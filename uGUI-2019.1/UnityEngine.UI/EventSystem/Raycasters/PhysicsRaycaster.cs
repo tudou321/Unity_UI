@@ -3,32 +3,25 @@ using UnityEngine.UI;
 
 namespace UnityEngine.EventSystems
 {
-    /// <summary>
-    /// Simple event system using physics raycasts.
-    /// </summary>
+    // 使用物理光线投射的简单事件系统
     [AddComponentMenu("Event/Physics Raycaster")]
     [RequireComponent(typeof(Camera))]
-    /// <summary>
-    /// Raycaster for casting against 3D Physics components.
-    /// </summary>
+    // Raycaster 用于针对3D物理组件进行铸造
     public class PhysicsRaycaster : BaseRaycaster
     {
-        /// <summary>
         /// Const to use for clarity when no event mask is set
-        /// </summary>
+        // 事件的mask没有设置时，用于清晰显示的常量
         protected const int kNoEventMaskSet = -1;
 
         protected Camera m_EventCamera;
 
-        /// <summary>
         /// Layer mask used to filter events. Always combined with the camera's culling mask if a camera is used.
-        /// </summary>
+        // 层级遮罩用于筛选事件，如果使用摄像机，则始终与摄影机的剔除遮罩结合使用
         [SerializeField]
         protected LayerMask m_EventMask = kNoEventMaskSet;
 
-        /// <summary>
         /// The max number of intersections allowed. 0 = allocating version anything else is non alloc.
-        /// </summary>
+        // 允许的最大交叉点数量，0=分配版本，其他任何内容都是非分配的
         [SerializeField]
         protected int m_MaxRayIntersections = 0;
         protected int m_LastMaxRayIntersections = 0;
@@ -49,45 +42,34 @@ namespace UnityEngine.EventSystems
         }
 
 
-        /// <summary>
-        /// Depth used to determine the order of event processing.
-        /// </summary>
+        // 用于确定事件处理顺序的深度
         public virtual int depth
         {
             get { return (eventCamera != null) ? (int)eventCamera.depth : 0xFFFFFF; }
         }
 
-        /// <summary>
-        /// Event mask used to determine which objects will receive events.
-        /// </summary>
+        // 用于确定哪些对象将接受事件的mask
         public int finalEventMask
         {
             get { return (eventCamera != null) ? eventCamera.cullingMask & m_EventMask : kNoEventMaskSet; }
         }
 
-        /// <summary>
-        /// Layer mask used to filter events. Always combined with the camera's culling mask if a camera is used.
-        /// </summary>
+        // 用于筛选事件的事件遮罩，如果使用摄影机，则始终与摄影机的剔除遮罩结合使用
         public LayerMask eventMask
         {
             get { return m_EventMask; }
             set { m_EventMask = value; }
         }
 
-        /// <summary>
-        /// Max number of ray intersection allowed to be found.
-        /// </summary>
-        /// <remarks>
-        /// A value of zero will represent using the allocating version of the raycast function where as any other value will use the non allocating version.
-        /// </remarks>
+        /// 允许找到的最大光线交点数
+        /// 值为0表示使用光线投影函数的分配版本，而任何其他值都将使用非分配版本
         public int maxRayIntersections
         {
             get { return m_MaxRayIntersections; }
             set { m_MaxRayIntersections = value; }
         }
 
-        /// <summary>
-        /// Returns a ray going from camera through the event position and the distance between the near and far clipping planes along that ray.
+        /// 返回从摄影机穿过事件位置的光线以及该光线的近裁剪平面和远裁剪平面之间的距离
         /// </summary>
         /// <param name="eventData">The pointer event for which we will cast a ray.</param>
         /// <param name="ray">The ray to use.</param>
@@ -101,26 +83,27 @@ namespace UnityEngine.EventSystems
             var eventPosition = Display.RelativeMouseAt(eventData.position);
             if (eventPosition != Vector3.zero)
             {
-                // We support multiple display and display identification based on event position.
+                // 我们支持多重显示和基于事件位置的显示标识
                 int eventDisplayIndex = (int)eventPosition.z;
 
-                // Discard events that are not part of this display so the user does not interact with multiple displays at once.
+                // 放弃不在次显示中的事件，这样用户就不会同时与多个显示交互
                 if (eventDisplayIndex != eventCamera.targetDisplay)
                     return false;
             }
             else
             {
-                // The multiple display system is not supported on all platforms, when it is not supported the returned position
+                // 并非所有平台都支持多重显示系统，当不支持返回位置时
                 // will be all zeros so when the returned index is 0 we will default to the event data to be safe.
+                // 将全部为0，因此当返回的索引为0时，为了安全起见，我们将默认使用事件数据
                 eventPosition = eventData.position;
             }
 
-            // Cull ray casts that are outside of the view rect. (case 636595)
+            // 剔除视图矩形之外的光线投射 (case 636595)
             if (!eventCamera.pixelRect.Contains(eventPosition))
                 return false;
 
             ray = eventCamera.ScreenPointToRay(eventPosition);
-            // compensate far plane distance - see MouseEvents.cs
+            // 补偿远平面距离 - see MouseEvents.cs
             float projectionDirection = ray.direction.z;
             distanceToClipPlane = Mathf.Approximately(0.0f, projectionDirection)
                 ? Mathf.Infinity

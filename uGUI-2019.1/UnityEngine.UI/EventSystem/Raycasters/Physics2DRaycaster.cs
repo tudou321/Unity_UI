@@ -3,14 +3,10 @@ using UnityEngine.UI;
 
 namespace UnityEngine.EventSystems
 {
-    /// <summary>
-    /// Simple event system using physics raycasts.
-    /// </summary>
+    /// 使用物理光线投射的简单事件系统
     [AddComponentMenu("Event/Physics 2D Raycaster")]
     [RequireComponent(typeof(Camera))]
-    /// <summary>
-    /// Raycaster for casting against 2D Physics components.
-    /// </summary>
+    // Raycaster 用于针对2D物理组件进行铸造
     public class Physics2DRaycaster : PhysicsRaycaster
     {
         RaycastHit2D[] m_Hits;
@@ -18,9 +14,7 @@ namespace UnityEngine.EventSystems
         protected Physics2DRaycaster()
         {}
 
-        /// <summary>
-        /// Raycast against 2D elements in the scene.
-        /// </summary>
+        /// 对场景中的2D元素进行光线投射
         public override void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
         {
             Ray ray = new Ray();

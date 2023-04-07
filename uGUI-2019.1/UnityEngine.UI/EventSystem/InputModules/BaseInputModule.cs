@@ -107,6 +107,10 @@ namespace UnityEngine.EventSystems
         protected static MoveDirection DetermineMoveDirection(float x, float y, float deadZone)
         {
             // 忽略数值很小的移动
+            // magnitude 是指向量的长度
+            // sqrMagnitude 是指向量长度的平方
+            // 在Unity当中使用平方的计算要比计算开放的速度快很多
+            // 如果只是单纯比较向量之间的大小的话，建议使用 Vector3.sqrMagnitude 进行比较即可，提高效率和节约性能
             if (new Vector2(x, y).sqrMagnitude < deadZone * deadZone)
                 return MoveDirection.None;
 
