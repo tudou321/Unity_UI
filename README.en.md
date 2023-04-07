@@ -1,7 +1,7 @@
 # Unity_UI
 
 #### Description
-此项目包含Unity的UI向学习，包括UGUI源码解读，以及UGUI扩展，以及UI框架等等
+此项目包含Unity的UI向学习，包括UGUI源码解读，UGUI扩展，以及UI框架等等
 
 #### Software Architecture
 Software architecture description
